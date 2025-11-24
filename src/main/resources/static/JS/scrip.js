@@ -55,6 +55,43 @@ function logout() {
     window.location.href = "login.html";
 }
 
+async function handleRegister(event) {
+    event.preventDefault();
+    const name = document.getElementById('reg-name').value;
+    const email = document.getElementById('reg-email').value;
+    const password = document.getElementById('reg-password').value;
+    
+    // El campo 'Direccion' es opcional en register.html, lo enviamos vacío.
+    const userPayload = { 
+        nombre: name, 
+        email: email, 
+        password: password, 
+        direccion: '' 
+    };
+
+    try {
+        const response = await fetch(`${BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userPayload) 
+        });
+        
+        // El controlador Java devuelve un String simple (ej. "Usuario registrado exitosamente")
+        const resultText = await response.text(); 
+
+        if (response.ok && resultText.includes('exitosamente')) {
+            alert('Registro exitoso. Por favor, inicia sesión.');
+            window.location.href = 'login.html'; 
+        } else {
+            // El backend devuelve el mensaje de error en el cuerpo de la respuesta.
+            alert(`Error de Registro: ${resultText || 'Hubo un problema al registrar el usuario.'}`);
+        }
+    } catch (error) {
+        console.error('Error en handleRegister:', error);
+        alert('Ocurrió un error de conexión con el servidor.');
+    }
+}
+
 
 // =========================================================
 // LÓGICA DE FILTRADO Y BÚSQUEDA
@@ -535,6 +572,7 @@ async function loadProfileAndHistory() {
 // EXPOSICIÓN DE FUNCIONES GLOBALES
 // =========================================================
 window.handleLogin = handleLogin;
+window.handleRegister = handleRegister; // <-- NUEVO: Exposición de la función de registro
 window.checkout = checkout;
 window.removeItemFromCart = removeItemFromCart;
 window.addToWishlist = addToWishlist;

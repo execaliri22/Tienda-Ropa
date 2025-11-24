@@ -29,8 +29,7 @@
     <div class="register-container">
         <h2 style="text-align: center; font-family: 'Oswald', sans-serif; text-transform: uppercase;">📝 Crear Cuenta</h2>
         
-        <form class="form-box">
-            <p style="text-align: center; margin-bottom: 20px; color: gray;">Implementación pendiente: Aquí se llamaría a la API <code>/api/auth/register</code>.</p>
+        <form onsubmit="handleRegister(event)" class="form-box">
             
             <label for="reg-name" style="display: block; margin-top: 15px; font-weight: 600;">Nombre</label>
             <input type="text" id="reg-name" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
@@ -45,5 +44,6 @@
         </form>
         <p style="text-align: center; margin-top: 20px;">¿Ya tienes cuenta? <a href="login.html" style="color: #111; font-weight: 600;">Iniciar Sesión</a></p>
     </div>
+    <script src="JS/scrip.js"></script>
 </body>
 </html>
