@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio - Tienda (Sesión Iniciada)</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Estilos mejorados para la distribución del menú y panel lateral */
+    .user-profile-nav { cursor: pointer; display: flex; align-items: center; gap: 10px; margin-left: 10px; }
+    #userAvatarNav { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #111; }
+    #userNameNav { color: #111; font-weight: 600; }
+    
+    /* Panel Lateral */
+    #userSection {
+      position: fixed;
+      top: 0; right: 0;
+      width: 0;
+      height: 100%;
+      background-color: #f8f8f8;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+      z-index: 100;
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    }
+    #userSection.active { width: 300px; padding: 20px; }
+    
+    .close-btn { position: absolute; top: 10px; right: 25px; font-size: 36px; margin-left: 50px; cursor: pointer; color: #111; }
+    .profile-avatar { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 15px; border: 3px solid #111; }
+    .user-panel-nav ul { list-style: none; padding: 0; }
+    .user-panel-nav a { display: block; padding: 12px 10px; text-decoration: none; color: #333; border-bottom: 1px solid #eee; transition: background-color 0.3s; border-radius: 4px; }
+    .user-panel-nav a:hover { background-color: #e9e9e9; }
+    .user-panel-nav i { margin-right: 10px; color: #111; }
+    
+    /* Mejorar texto de bienvenida en el header */
+    #welcomeName { color: #111; font-weight: 700; text-transform: none; }
+    .header-txt p { font-size: 20px; }
+  </style>
+</head>
+<body>
+
+<div id="userSection" class="user-section">
+  <a href="javascript:void(0)" class="close-btn" id="closeUserSection">&times;</a>
+  <div style="text-align: center; border-bottom: 1px solid #ccc; padding-bottom: 20px;">
+    <img src="https://ui-avatars.com/api/?name=U&background=random" alt="Avatar" class="profile-avatar" id="profileAvatar">
+    <h3 id="profileName">Nombre de Usuario</h3>
+    <p id="userEmail" style="font-size: 14px; color: gray;">email@ejemplo.com</p>
+  </div>
+  
+  <div class="profile-content-container">
+    <nav class="user-panel-nav">
+      <ul>
+        <li><a href="products.html"><i class="fas fa-tshirt"></i> Catálogo</a></li>
+        <li><a href="cart.html"><i class="fas fa-shopping-cart"></i> Mi Carrito</a></li>
+        <li><a href="wishlist.html"><i class="fas fa-heart"></i> Mis Deseos</a></li>
+        <li><a href="profile.html"><i class="fas fa-user-circle"></i> Mi Perfil / Pedidos</a></li>
+        <li><a href="#" onclick="logout()" style="color: red;"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<header class="header">
+  <div class="menu container">
+    <a href="index2.html" class="logo">logo</a>
+    <input type="checkbox" id="menu">
+    <label for="menu">
+      <img src="images/menu.png" alt="menu" class="menu-icono">
+    </label>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index2.html">Inicio</a></li>
+        <li><a href="products.html">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+        <li>
+          <div class="user-profile-nav" id="userProfileNav">
+            <img src="https://ui-avatars.com/api/?name=U&background=random" alt="Foto de perfil" id="userAvatarNav">
+            <span id="userNameNav">Invitado</span>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="header-content container">
+    <div class="header-img">
+      <img src="images/right.png" alt="Ofertas">
+    </div>
+    <div class="header-txt">
+      <h1>Bienvenido, <span id="welcomeName">Usuario</span>!</h1>
+      <p>Explora nuestras últimas colecciones y gestiona tu cuenta.</p>
+      <a href="products.html" class="btn-1">Ver Productos</a>
+    </div>
+  </div>
+</header>
+
+<footer class="footer">
+  <div class="footer-content container">
+    <div class="link"><h3>Lorem</h3><ul><li><a href="#">lorem</a></li></ul></div>
+  </div>
+</footer>
+
+<script src="JS/scrip.js"></script> 
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const userData = JSON.parse(localStorage.getItem('user'));
+    
+    if (userData) {
+      document.getElementById('userNameNav').textContent = userData.name || 'Mi Cuenta';
+      document.getElementById('welcomeName').textContent = userData.name || 'Usuario';
+      document.getElementById('profileName').textContent = userData.name || 'Usuario';
+      document.getElementById('userEmail').textContent = userData.email || 'N/A';
+      
+      const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name || 'U')}&background=random`;
+      document.getElementById('userAvatarNav').src = avatarUrl;
+      document.getElementById('profileAvatar').src = avatarUrl;
+    } else {
+      window.location.href = "login.html";
+    }
+
+    const userProfileNav = document.getElementById('userProfileNav');
+    const userSection = document.getElementById('userSection');
+    const closeBtn = document.getElementById('closeUserSection');
+    
+    userProfileNav.addEventListener('click', function() { 
+      userSection.classList.add('active'); 
+      document.body.style.overflow = 'hidden'; 
+    });
+    
+    closeBtn.addEventListener('click', function() { 
+      userSection.classList.remove('active'); 
+      document.body.style.overflow = 'auto'; 
+    });
+    
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "Escape" && userSection.classList.contains('active')) {
+            userSection.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    });
+  });
+</script>
+</body>
+</html>

@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/cart")
 public class CartController {
     
-    // Nota: El ID de usuario (userId) debería obtenerse de la sesión 
-    // o un token de seguridad, no pasarse en la URL/Body.
     private final String MOCK_USER_ID = "12345";
 
     @Autowired
@@ -24,29 +22,25 @@ public class CartController {
         return cartService.getOrCreateCart(MOCK_USER_ID);
     }
 
-    // POST /api/cart/add - Agregar producto al carrito [cite: 69]
+    // POST /api/cart/add - Agregar producto al carrito
     @PostMapping("/add")
     public Cart addItemToCart(@RequestParam String productId, @RequestParam int quantity) {
         return cartService.addItem(MOCK_USER_ID, productId, quantity);
     }
 
-    // POST /api/cart/update - Modificar cantidad [cite: 71]
+    // POST /api/cart/update - Modificar cantidad (Implementado)
     @PostMapping("/update")
     public Cart updateItemQuantity(@RequestParam String productId, @RequestParam int quantity) {
-        // En una implementación real, se llamaría a un método del CartService 
-        // para modificar la cantidad
-        return getCart(); 
+        return cartService.updateItemQuantity(MOCK_USER_ID, productId, quantity);
     }
 
-    // POST /api/cart/remove - Eliminar del carrito [cite: 73]
+    // POST /api/cart/remove - Eliminar del carrito (Implementado)
     @PostMapping("/remove")
     public Cart removeItem(@RequestParam String productId) {
-        // En una implementación real, se llamaría a un método del CartService 
-        // para eliminar un ItemCarrito
-        return getCart(); 
+        return cartService.removeItem(MOCK_USER_ID, productId);
     }
 
-    // POST /api/cart/checkout - Realizar compra (checkout) [cite: 76]
+    // POST /api/cart/checkout - Realizar compra (checkout)
     @PostMapping("/checkout")
     public ResponseEntity<Order> checkout() {
         try {

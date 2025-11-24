@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tu Carrito de Compras</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ---------------------------------------------------- */
+    /* 1. STICKY FOOTER Y ESTRUCTURA */
+    /* ---------------------------------------------------- */
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    main { flex-grow: 1; }
+
+    /* ---------------------------------------------------- */
+    /* 2. SECONDARY HEADER (Fino y Sencillo - Consistente) */
+    /* ---------------------------------------------------- */
+    .secondary-header {
+        min-height: 8vh !important; /* Más fino */
+        padding: 10px 0 !important; /* Menos padding */
+        background-color: #f8f8f8 !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0; /* Elimina espacio blanco debajo del header */
+    }
+    
+    .secondary-header .menu {
+        position: relative !important;
+        margin-top: 0 !important;
+        padding: 0;
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between; 
+        width: 100%; 
+    }
+    
+    .secondary-header .navbar ul {
+        gap: 40px !important; 
+        justify-content: flex-end; 
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        align-items: center; 
+    }
+
+    .secondary-header .navbar ul li a {
+        padding: 0.5rem 0.5rem !important; 
+        font-size: 16px; 
+    }
+
+    /* ---------------------------------------------------- */
+    /* 3. TÍTULO Y ESTRUCTURA GENERAL (Consistente) */
+    /* ---------------------------------------------------- */
+    .catalog-header-section {
+        text-align: center; 
+        margin-bottom: 50px; 
+        padding: 20px 0;
+        background-color: #fdfdfd; 
+    }
+
+    .page-title {
+        font-family: 'Oswald', sans-serif; 
+        text-transform: uppercase; 
+        font-size: 38px; 
+        font-weight: 600; 
+        color: #111;
+        padding: 10px 25px; 
+        margin: 0 auto 10px auto; 
+        border-bottom: 3px solid #FF5733; 
+        background-color: transparent; 
+        box-shadow: none; 
+        display: inline-block; 
+        letter-spacing: 1.5px; 
+        max-width: 80%; 
+    }
+    
+    .page-description {
+        font-size: 16px;
+        color: #666;
+        max-width: 700px; 
+        margin: 0 auto 40px auto; 
+        line-height: 1.6;
+    }
+
+    /* ---------------------------------------------------- */
+    /* 4. ESTILOS DE LA TABLA Y TOTALES (Mejorados) */
+    /* ---------------------------------------------------- */
+    
+    table {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+    }
+    thead tr {
+      background-color: #111;
+      color: #fff;
+      border: none;
+    }
+    th {
+      padding: 15px;
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tbody tr:hover {
+        background-color: #f0f0f0;
+    }
+    
+    /* Contenedor del Total */
+    .summary-box {
+        text-align: right; 
+        margin-top: 30px; 
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    
+    .total-display {
+        background-color: #fff;
+        padding: 15px 20px;
+        border: 2px solid #111;
+        border-radius: 6px;
+        font-size: 1.2em;
+        font-weight: 700;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        min-width: 250px;
+    }
+    
+    /* Botones de acción inferiores */
+    .actions-buttons-group {
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end;
+    }
+    
+    /* Estilo de botón FINALIZAR COMPRA (Prominente) */
+    .btn-checkout {
+        display: inline-block;
+        padding: 12px 25px;
+        background: #FF5733; /* Color de acento */
+        color: #fff;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: background-color 0.2s;
+        text-decoration: none;
+    }
+    .btn-checkout:hover {
+        background: #e64a27;
+    }
+
+    /* Estilo de botón VACIAR CARRITO (Peligro) */
+    .btn-clear-cart {
+        display: inline-block;
+        padding: 12px 25px;
+        background: #dc3545; /* Rojo de peligro */
+        color: #fff;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: background-color 0.2s;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-clear-cart:hover {
+        background: #c82333;
+    }
+    
+    @media (max-width: 768px) {
+        .actions-buttons-group {
+            flex-direction: column;
+            width: 100%;
+        }
+        .actions-buttons-group a, .actions-buttons-group button {
+            width: 100%;
+            text-align: center;
+        }
+        .summary-box {
+            align-items: center;
+            width: 100%;
+        }
+    }
+  </style>
+</head>
+<body onload="loadCart()">
+
+<header class="header secondary-header">
+  <div class="menu container">
+    <a href="index2.html" class="logo">LOGO</a>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index2.html">Inicio</a></li>
+        <li><a href="products.html">Catálogo</a></li>
+       
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+    <section class="container" style="padding: 50px 0;">
+        <div class="catalog-header-section">
+            <h2 class="page-title">🛒 TU CARRITO DE COMPRAS</h2>
+            <p class="page-description">Revisa y ajusta los artículos antes de finalizar tu compra.</p>
+        </div>
+      
+      <table style="width: 100%; border-collapse: collapse; margin-top: 30px; text-align: left;">
+        <thead>
+          <tr>
+            <th>PRODUCTO</th>
+            <th>CANTIDAD</th>
+            <th>PRECIO UNITARIO</th>
+            <th>SUBTOTAL</th>
+            <th>ACCIÓN</th>
+          </tr>
+        </thead>
+        <tbody id="cart-items">
+          <tr><td colspan="5" style="padding: 20px; text-align: center;">Cargando carrito...</td></tr>
+        </tbody>
+      </table>
+      
+      <div class="summary-box">
+        <div class="total-display">
+            Total del Carrito: <span id="cart-total">$0.00</span>
+        </div>
+        
+        <div class="actions-buttons-group">
+            <a href="checkout.html" class="btn-checkout">Finalizar Compra</a>
+            <button class="btn-clear-cart" disabled>Vaciar Carrito</button> 
+        </div>
+      </div>
+    </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-content container">
+    <div class="link"><h3>LOREM</h3><ul><li><a href="#">lorem</a></li></ul></div>
+  </div>
+</footer>
+
+<script src="JS/scrip.js"></script>
+</body>
+</html>

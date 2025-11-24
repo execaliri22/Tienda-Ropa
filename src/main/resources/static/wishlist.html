@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Lista de Deseos</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ---------------------------------------------------- */
+    /* 1. STICKY FOOTER Y ESTRUCTURA */
+    /* ---------------------------------------------------- */
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    main { flex-grow: 1; }
+
+    /* ---------------------------------------------------- */
+    /* 2. SECONDARY HEADER (Fino y Sencillo) */
+    /* ---------------------------------------------------- */
+    .secondary-header {
+        min-height: 8vh !important; /* Más fino */
+        padding: 10px 0 !important; 
+        background-color: #f8f8f8 !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0; 
+    }
+    
+    .secondary-header .menu {
+        position: relative !important;
+        margin-top: 0 !important;
+        padding: 0;
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between; 
+        width: 100%; 
+    }
+    
+    .secondary-header .navbar ul {
+        gap: 40px !important; 
+        justify-content: flex-end; 
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        align-items: center; 
+    }
+
+    .secondary-header .navbar ul li a {
+        padding: 0.5rem 0.5rem !important; 
+        font-size: 16px; 
+    }
+
+    /* ---------------------------------------------------- */
+    /* 3. TÍTULO Y ESTRUCTURA GENERAL (Consistente y Centrado) */
+    /* ---------------------------------------------------- */
+    .catalog-header-section {
+        text-align: center; 
+        margin-bottom: 50px; 
+        padding: 20px 0;
+        background-color: #fdfdfd; 
+    }
+
+    .page-title {
+        font-family: 'Oswald', sans-serif; 
+        text-transform: uppercase; 
+        font-size: 38px; 
+        font-weight: 600; 
+        color: #111;
+        padding: 10px 25px; 
+        margin: 0 auto 10px auto; 
+        border-bottom: 3px solid #FF5733; 
+        background-color: transparent; 
+        box-shadow: none; 
+        display: inline-block; 
+        letter-spacing: 1.5px; 
+        max-width: 80%; 
+    }
+    
+    .page-description {
+        font-size: 16px;
+        color: #666;
+        max-width: 700px; 
+        margin: 0 auto 40px auto; 
+        line-height: 1.6;
+    }
+
+    /* ---------------------------------------------------- */
+    /* 4. ESTILOS DE BOTONES (VER DETALLE Y ELIMINAR) */
+    /* ---------------------------------------------------- */
+    
+    /* Botón Ver Detalle (Primario/Negro, Estilo Añadido) */
+    .btn-view-detail {
+        display: inline-block;
+        padding: 10px 15px;
+        background: #111 !important;
+        color: #fff !important;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background-color 0.2s;
+        text-decoration: none;
+        margin-right: 10px; /* Separación del botón Eliminar */
+    }
+    .btn-view-detail:hover {
+        background: #444 !important;
+    }
+
+    /* Botón Eliminar (Rojo/Peligro) */
+    .btn-delete-wishlist {
+        display: inline-block;
+        padding: 10px 15px;
+        background: #dc3545 !important;
+        color: #fff !important;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background-color 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-delete-wishlist:hover {
+        background: #c82333 !important;
+    }
+    
+    /* ---------------------------------------------------- */
+    /* 5. ESTILOS DE LA CUADRÍCULA DE DESEOS (TARJETA) */
+    /* ---------------------------------------------------- */
+    .wishlist-grid {
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 30px; 
+      margin-top: 30px;
+      justify-content: flex-start; 
+    }
+    .product-card {
+        flex: 0 0 calc(33.333% - 20px); 
+        max-width: calc(33.333% - 20px); 
+        border: 2px solid #f9d8d8; 
+        padding: 20px; 
+        text-align: center; 
+        border-radius: 8px; 
+        box-shadow: 0 4px 8px rgba(255, 77, 77, 0.1); 
+        transition: transform 0.3s;
+        background-color: #fff;
+    }
+    .product-card h3 {
+        font-family: 'Oswald', sans-serif;
+    }
+    .product-card p {
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #111;
+        margin: 5px 0 15px 0;
+    }
+    .product-card img {
+        max-height: 180px;
+        object-fit: cover;
+        margin-bottom: 15px;
+    }
+    
+    @media (max-width: 991px) {
+        .product-card {
+            flex: 0 0 calc(50% - 15px);
+            max-width: calc(50% - 15px);
+        }
+    }
+    @media (max-width: 600px) {
+        .product-card {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+  </style>
+</head>
+<body onload="loadWishlist()">
+
+<header class="header secondary-header">
+  <div class="menu container">
+    <a href="index2.html" class="logo">LOGO</a>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index2.html">Inicio</a></li>
+        <li><a href="products.html">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+        <li><a href="profile.html">Mi Perfil</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+    <section class="container" style="padding: 50px 0;">
+        <div class="catalog-header-section">
+            <h2 class="page-title"> MI LISTA DE DESEOS</h2>
+            <p class="page-description">Los productos que guardaste para comprar más tarde o revisar.</p>
+        </div>
+      
+      <div id="wishlist-container" class="wishlist-grid">
+        <p>Cargando lista de deseos...</p>
+      </div>
+    </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-content container">
+    <div class="link"><h3>LOREM</h3><ul><li><a href="#">lorem</a></li></ul></div>
+  </div>
+</footer>
+
+<script src="JS/scrip.js"></script>
+</body>
+</html>

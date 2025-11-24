@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Tienda</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Mejoras en el layout de checkout */
+    .checkout-layout {
+        display: flex; 
+        gap: 40px; 
+        margin-top: 30px; 
+        flex-wrap: wrap;
+    }
+    .payment-form-container, .summary-container {
+        flex: 1; 
+        min-width: 300px; 
+        padding: 30px;
+        border-radius: 8px;
+    }
+    .payment-form-container {
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .summary-container {
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+    }
+    .summary-container ul {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 20px;
+    }
+    .summary-container li {
+        padding: 10px 0;
+        border-bottom: 1px dashed #ccc;
+    }
+    .summary-container h3 {
+        font-family: 'Oswald', sans-serif;
+        text-transform: uppercase;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #111;
+        padding-bottom: 10px;
+    }
+    .total-box {
+        margin-top: 20px; 
+        padding-top: 20px; 
+        border-top: 2px solid #111;
+    }
+    .form-input {
+        width: 100%; 
+        padding: 10px; 
+        margin-bottom: 20px; 
+        border: 1px solid #ccc; 
+        border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<header class="header" style="min-height: 20vh; background-color: #f0f0f0;">
+  <div class="menu container">
+    <a href="index2.html" class="logo">logo</a>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index2.html">Inicio</a></li>
+        <li><a href="products.html">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+        <li><a href="profile.html">Mi Perfil</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<section class="container" style="padding: 50px 0;">
+  <h2 style="font-family: 'Oswald', sans-serif; text-transform: uppercase;">💳 Finalizar Compra</h2>
+  <div class="checkout-layout">
+    
+    <div class="payment-form-container">
+      <h3>1. Datos de Envío y Pago</h3>
+      
+      <form onsubmit="checkout(event)">
+        <label for="address" style="display: block; margin-top: 15px; font-weight: 600;">Dirección de Envío</label>
+        <input type="text" id="address" name="address" required 
+               value="Dirección Mock de Usuario" readonly class="form-input"
+               style="background-color: #eee;">
+        
+        <label for="payment" style="display: block; margin-top: 15px; font-weight: 600;">Método de Pago</label>
+        <select id="payment" name="payment" required class="form-input" style="margin-bottom: 30px;">
+          <option value="credit_card">Tarjeta de Crédito (Simulado)</option>
+          <option value="paypal">PayPal (Simulado)</option>
+        </select>
+        
+        <button type="submit" class="btn-1" style="width: 100%; background-color: #4CAF50; padding: 12px 25px;">✅ Confirmar Pedido y Pagar</button>
+      </form>
+      <p style="margin-top: 20px; text-align: center; color: gray; font-size: 0.9em;">Al presionar el botón se llamará a la API <code>/api/cart/checkout</code>.</p>
+    </div>
+    
+    <div class="summary-container">
+      <h3>2. Resumen del Pedido</h3>
+      <p style="color: gray; margin-bottom: 10px;">(El JS de esta página debería cargar el carrito aquí)</p>
+      <ul id="order-summary-items">
+        <li>Ítem 1 (x1): $X.XX</li>
+        <li>Ítem 2 (x1): $X.XX</li>
+      </ul>
+      
+      <div class="total-box">
+        <p style="font-size: 24px; font-weight: bold;">Total a Pagar: <span id="checkout-total">$XXX.XX</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-content container">
+    <div class="link"><h3>Lorem</h3><ul><li><a href="#">lorem</a></li></ul></div>
+  </div>
+</footer>
+
+<script src="JS/scrip.js"></script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Productos - Tienda</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ---------------------------------------------------- */
+    /* 1. STICKY FOOTER Y ESTRUCTURA */
+    /* ---------------------------------------------------- */
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    main { flex-grow: 1; }
+
+    /* ---------------------------------------------------- */
+    /* 2. SECONDARY HEADER (Estilos de Contenedor) */
+    /* ---------------------------------------------------- */
+    .secondary-header {
+        min-height: 10vh !important; 
+        padding: 15px 0 !important;
+        background-color: #f8f8f8 !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .secondary-header .menu {
+        position: relative !important;
+        margin-top: 0 !important;
+        padding: 0;
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between; 
+        width: 100%; 
+    }
+    
+    .secondary-header .navbar {
+        flex-grow: 1; 
+    }
+
+    .secondary-header .navbar ul {
+        gap: 20px !important; 
+        justify-content: flex-end; 
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        align-items: center; 
+    }
+
+    .secondary-header .navbar ul li a {
+        padding: 0.5rem 0.5rem !important; 
+        font-size: 16px; 
+    }
+
+    /* ---------------------------------------------------- */
+    /* 3. ESTILOS DE BÚSQUEDA EN NAVBAR */
+    /* ---------------------------------------------------- */
+    .search-nav-item {
+        order: 5; 
+        margin-left: 40px; 
+        flex-grow: 1; 
+        max-width: 300px;
+    }
+    .search-nav-item .search-group {
+        display: flex;
+        gap: 0;
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .search-nav-item #search-input {
+        padding: 5px 10px;
+        border: none;
+        flex-grow: 1;
+        font-size: 14px;
+    }
+    .search-nav-item #search-button {
+        padding: 5px 10px;
+        border: none;
+        background-color: #111;
+        color: #fff;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    /* ---------------------------------------------------- */
+    /* 4. ESTILOS DEL SUBMENÚ 'FILTRAR' (DELICADO) */
+    /* ---------------------------------------------------- */
+    .has-submenu {
+        position: relative;
+    }
+    .submenu-content {
+        display: none;
+        position: absolute;
+        top: calc(100% + 5px); 
+        left: 50%;
+        transform: translateX(-50%); 
+        z-index: 10;
+        min-width: 250px;
+        background-color: #fff;
+        border: 1px solid #eee; /* Borde más suave */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Sombra más ligera */
+        padding: 12px; /* Más padding */
+        border-radius: 8px; /* Bordes más redondeados */
+        flex-direction: column; 
+        gap: 5px;
+    }
+    .has-submenu:hover .submenu-content, .submenu-content.open {
+        display: flex;
+    }
+    .submenu-content .category-button {
+        margin-bottom: 0;
+        width: 100%; 
+        text-align: left;
+        border: none; 
+        background-color: #fff;
+        color: #333;
+        padding: 8px 10px; /* Padding ajustado para ítems del submenu */
+        transition: background-color 0.2s, color 0.2s; /* Transición suave */
+    }
+    .submenu-content .category-button:hover, .category-button.active {
+        background-color: #f5f5f5; /* Fondo más suave en hover/activo */
+        color: #111;
+        border: none;
+    }
+    
+    /* ---------------------------------------------------- */
+    /* 5. ESTILO DEL TÍTULO CENTRAL (MÁS SENCILLO) */
+    /* ---------------------------------------------------- */
+    .catalog-header-section {
+        text-align: center; 
+        margin-bottom: 50px; 
+        padding: 20px 0;
+        background-color: #fdfdfd; /* Fondo muy claro */
+    }
+
+    .page-title {
+        font-family: 'Oswald', sans-serif; 
+        text-transform: uppercase; 
+        font-size: 38px; /* Tamaño ligeramente reducido */
+        font-weight: 600; /* Menos negrita */
+        color: #111;
+        padding: 10px 25px; /* Padding más discreto */
+        margin: 0 auto 10px auto; /* Centrado */
+        border-bottom: 3px solid #FF5733; /* Borde inferior más fino con acento */
+        background-color: transparent; /* Fondo transparente */
+        border-radius: 0; /* Sin bordes redondeados */
+        box-shadow: none; /* Sin sombra */
+        display: inline-block; 
+        letter-spacing: 1.5px; /* Espaciado ajustado */
+        max-width: 80%; 
+    }
+    
+    .page-description {
+        font-size: 16px; /* Ajuste para que no sea muy grande */
+        color: #666; /* Un gris un poco más suave */
+        max-width: 700px; 
+        margin: 0 auto 40px auto; 
+        line-height: 1.6;
+    }
+
+    /* ---------------------------------------------------- */
+    /* 6. ESTILO ESPECÍFICO PARA BOTÓN "VER DETALLE" */
+    /* ---------------------------------------------------- */
+    .btn-2 {
+        display: inline-block;
+        padding: 8px 15px; 
+        background: transparent !important; 
+        color: #111 !important; 
+        border: 2px solid #111 !important; 
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background-color 0.2s, color 0.2s;
+        margin-right: 5px; 
+    }
+    .btn-2:hover {
+        background: #111 !important;
+        color: #fff !important;
+    }
+    
+    /* --- Estilos de Catálogo (Mantenidos) --- */
+    .product-category {
+        font-family: 'Poppins', sans-serif;
+        font-size: 12px;
+        color: #777; 
+        text-transform: uppercase;
+        margin-bottom: 5px;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .product-list-container {
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 30px; 
+      margin-top: 30px;
+      justify-content: flex-start; 
+    }
+    .product-card {
+        flex: 0 0 calc(33.333% - 20px); 
+        max-width: calc(33.333% - 20px); 
+        border: 1px solid #e0e0e0; 
+        padding: 20px; 
+        text-align: center; 
+        border-radius: 8px; 
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
+        transition: transform 0.3s;
+    }
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    @media (max-width: 991px) {
+        .product-card {
+            flex: 0 0 calc(50% - 15px);
+            max-width: calc(50% - 15px);
+        }
+    }
+    @media (max-width: 600px) {
+        .product-card {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+  </style>
+</head>
+<body onload="loadCategoriesAndFilters()">
+
+<header class="header secondary-header">
+  <div class="menu container">
+    <a href="index2.html" class="logo">LOGO</a>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index2.html">Inicio</a></li>
+        
+        <li><a href="cart.html">Carrito</a></li>
+       
+
+        <li class="has-submenu" onmouseover="showSubmenu()" onmouseout="hideSubmenu()">
+            <a href="#" onclick="return false;" style="font-weight: 700; color: #FF5733;">Filtrar</a>
+            <div id="category-submenu" class="submenu-content">
+                </div>
+        </li>
+
+        <li class="search-nav-item">
+            <div class="search-group">
+                <input type="text" id="search-input" placeholder="Buscar producto..." onkeydown="if(event.key === 'Enter') searchProducts()">
+                <button id="search-button" onclick="searchProducts()">🔍</button>
+            </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main> 
+    <section class="container" style="padding: 50px 0;">
+      <div class="catalog-header-section">
+          <h2 class="page-title">🛍️ CATÁLOGO DE PRODUCTOS</h2>
+          <p class="page-description">Explora nuestra colección. Los productos a continuación se cargan directamente desde la API del backend, ofreciéndote lo mejor de nuestra tienda.</p>
+      </div>
+      
+      <div id="product-catalog" class="product-list-container">
+        <p>Cargando productos...</p>
+      </div>
+    </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-content container">
+    <div class="link"><h3>LOREM</h3><ul><li><a href="#">lorem</a></li></ul></div>
+  </div>
+</footer>
+
+<script src="JS/scrip.js"></script>
+<script>
+    // Pequeño script auxiliar para manejar la visibilidad del submenu en hover
+    function showSubmenu() {
+        document.getElementById('category-submenu').classList.add('open');
+    }
+    function hideSubmenu() {
+        document.getElementById('category-submenu').classList.remove('open');
+    }
+
+    // Asegúrate de que tu scrip.js esté cargando después de este.
+    // También verifica que el scrip.js apunta a 'category-submenu' para inyectar los botones.
+</script>
+</body>
+</html>
+````http://googleusercontent.com/image_generation_content/1

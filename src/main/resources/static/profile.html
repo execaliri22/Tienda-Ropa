@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Perfil de Usuario</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Mejoras en el layout del perfil */
+    .profile-layout {
+        display: flex; 
+        gap: 40px; 
+        margin-top: 30px; 
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+    .sidebar {
+        flex: 0 0 250px;
+        min-width: 250px;
+        padding: 20px; 
+        background-color: #f5f5f5;
+        border-radius: 8px;
+    }
+    .content-area {
+        flex: 1; 
+        padding: 20px; 
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+    .oswald-title {
+        font-family: 'Oswald', sans-serif; 
+        text-transform: uppercase; 
+        margin-bottom: 15px;
+    }
+    #order-history {
+        margin-top: 40px; 
+        border-top: 1px solid #ccc; 
+        padding-top: 20px;
+    }
+    .content-area p {
+        margin-bottom: 10px;
+    }
+    .sidebar a {
+        display: block; 
+        margin-bottom: 10px; 
+        color: #111;
+        padding: 5px;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+    .sidebar a:hover {
+        background-color: #e0e0e0;
+    }
+    @media (max-width: 768px) {
+        .profile-layout {
+            flex-direction: column;
+        }
+        .sidebar {
+            min-width: 100%;
+        }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header" style="min-height: 20vh; background-color: #f0f0f0;">
+  <div class="menu container">
+    <a href="index2.html" class="logo">logo</a>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index2.html">Inicio</a></li>
+        <li><a href="products.html">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+        <li><a href="profile.html">Mi Perfil</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<section class="container" style="padding: 50px 0;">
+  <h2 class="oswald-title">👤 Mi Perfil y Pedidos</h2>
+  
+  <div id="profile-main" class="profile-layout">
+    <div class="sidebar">
+      <h4 style="margin-bottom: 20px; font-weight: 700;">Menú de Cuenta</h4>
+      <a href="#profile-info">Información Personal</a>
+      <a href="wishlist.html">Mi Lista de Deseos</a>
+      <a href="#order-history">Historial de Pedidos</a>
+      <button onclick="logout()" class="btn-2" style="background-color: #dc3545; width: 100%; margin-top: 20px;">Cerrar Sesión</button>
+    </div>
+
+    <div class="content-area">
+      
+      <div id="profile-info">
+        <h3 class="oswald-title">Información Personal</h3>
+        <p>Cargando datos del usuario...</p>
+      </div>
+      
+      <h3 id="order-history" class="oswald-title">Historial de Pedidos</h3>
+      
+      <table style="width: 100%; border-collapse: collapse; margin-top: 20px; text-align: left;">
+        <thead>
+          <tr style="border-bottom: 2px solid #111;">
+            <th style="padding: 15px;">ID Pedido</th>
+            <th style="padding: 15px;">Fecha</th>
+            <th style="padding: 15px;">Total</th>
+            <th style="padding: 15px;">Estado</th>
+          </tr>
+        </thead>
+        <tbody id="order-history-items">
+            <tr><td colspan="4" style="padding: 20px; text-align: center;">Cargando historial...</td></tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-content container">
+    <div class="link"><h3>Lorem</h3><ul><li><a href="#">lorem</a></li></ul></div>
+  </div>
+</footer>
+
+<script src="JS/scrip.js"></script>
+</body>
+</html>

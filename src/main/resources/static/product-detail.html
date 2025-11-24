@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Producto - Tienda</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ---------------------------------------------------- */
+        /* 1. STICKY FOOTER Y ESTRUCTURA (Flexbox para la altura completa) */
+        /* ---------------------------------------------------- */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        main {
+            flex-grow: 1; 
+        }
+
+        /* ---------------------------------------------------- */
+        /* 2. SECONDARY HEADER (Fino y Sencillo - Ajustado) */
+        /* ---------------------------------------------------- */
+        .secondary-header {
+            min-height: 8vh !important; /* Más fino */
+            padding: 10px 0 !important; /* Menos padding */
+            background-color: #f8f8f8 !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0; /* Elimina espacio blanco si había margen */
+        }
+        
+        .secondary-header .menu {
+            position: relative !important;
+            margin-top: 0 !important;
+            padding: 0;
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            width: 100%; 
+        }
+        
+        .secondary-header .navbar {
+            flex-grow: 1; 
+            text-align: right; 
+        }
+
+        .secondary-header .navbar ul {
+            gap: 40px !important; 
+            justify-content: flex-end; 
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .secondary-header .navbar ul li a {
+            padding: 0.5rem 0.5rem !important; 
+            font-size: 16px; 
+        }
+        
+        /* ---------------------------------------------------- */
+        /* 3. DETALLE DEL PRODUCTO (Estilos Mejorados) */
+        /* ---------------------------------------------------- */
+        .product-detail-wrapper {
+            display: flex;
+            flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+            gap: 40px; /* Espacio entre la imagen y la información */
+            align-items: flex-start; /* Alineación al inicio */
+            padding: 40px 0;
+            max-width: 1200px; /* Ancho máximo del contenido */
+            margin: 0 auto; /* Centrar el contenedor principal */
+        }
+
+        .product-image-container {
+            flex: 1; /* Ocupa el espacio disponible */
+            min-width: 300px; /* Ancho mínimo para la imagen */
+            max-width: 500px; /* Ancho máximo para la imagen */
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            padding: 20px;
+        }
+
+        .product-image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain; /* Asegura que la imagen se vea completa */
+            max-height: 450px; /* Altura máxima para la imagen */
+            border-radius: 4px;
+        }
+
+        .product-info {
+            flex: 1.5; /* Ocupa más espacio que la imagen */
+            min-width: 350px; /* Ancho mínimo para la información */
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .detail-title-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .detail-page-title {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            font-size: 32px; /* Más grande */
+            font-weight: 700;
+            color: #111;
+            padding: 10px 0;
+            margin: 0 auto 10px auto;
+            border-bottom: 3px solid #FF5733; /* Color de acento */
+            display: inline-block;
+            letter-spacing: 1.5px;
+        }
+
+        h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 38px;
+            margin-bottom: 10px;
+            color: #111;
+            line-height: 1.2;
+        }
+
+        .price {
+            font-size: 2.2em; /* Precio más grande */
+            font-weight: 700;
+            color: #FF5733; /* Color de acento para el precio */
+            margin-bottom: 15px;
+            display: block; /* Asegura que ocupe su propia línea */
+        }
+
+        .stock {
+            font-size: 1.1em;
+            color: #28a745; /* Color verde para "En Stock" */
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .description {
+            font-size: 1.05em;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            border-top: 1px solid #eee; /* Separador */
+            padding-top: 20px;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .quantity-control label {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            margin-right: 15px;
+        }
+
+        .quantity-control input[type="number"] {
+            width: 70px; /* Ancho ajustado */
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            text-align: center;
+            -moz-appearance: textfield; /* Para Firefox */
+        }
+        .quantity-control input[type="number"]::-webkit-outer-spin-button,
+        .quantity-control input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* Alinea los botones al inicio */
+            gap: 15px; /* Espacio entre botones */
+            margin-top: 30px; /* Espacio superior */
+        }
+        
+        /* Estilo para el botón Añadir al Carrito */
+        .btn-add-to-cart {
+            background-color: #111;
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.05em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            flex-grow: 0; /* No se estira */
+        }
+        .btn-add-to-cart:hover {
+            background-color: #333;
+        }
+
+        /* Estilo para el botón de Deseos (ícono de corazón) */
+        .btn-wishlist {
+            background: none;
+            border: none;
+            color: #ccc; /* Color inicial del corazón */
+            font-size: 1.8em; /* Tamaño del ícono */
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.2s ease;
+            float: right; /* Flota a la derecha del contenedor */
+            position: absolute; /* Posicionamiento absoluto para el corazón */
+            top: 25px; /* Ajusta la posición superior */
+            right: 25px; /* Ajusta la posición derecha */
+        }
+        .btn-wishlist:hover {
+            color: #FF5733; /* Color de acento al pasar el ratón */
+            transform: scale(1.1); /* Efecto de escala */
+        }
+        .btn-wishlist.active { /* Para cuando el producto ya está en wishlist */
+            color: #FF5733;
+        }
+
+        /* ---------------------------------------------------- */
+        /* FOOTER (Mantenido) */
+        /* ---------------------------------------------------- */
+        .footer {
+            background-color: #111;
+            color: #fff;
+            padding: 30px 0;
+            text-align: center;
+            width: 100%;
+        }
+        .footer-content {
+            display: flex;
+            justify-content: center; /* Centra el contenido del footer */
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .footer .link {
+            margin: 0 20px; /* Espacio entre elementos del footer */
+        }
+        .footer .link h3 {
+            color: #fff;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .footer .link ul {
+            list-style: none;
+            padding: 0;
+        }
+        .footer .link ul li a {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        .footer .link ul li a:hover {
+            color: #fff;
+        }
+
+        /* Media Queries para Responsividad */
+        @media (max-width: 991px) {
+            .product-detail-wrapper {
+                flex-direction: column; /* Apila imagen y detalles */
+                align-items: center;
+                gap: 30px;
+                padding: 30px 20px;
+            }
+            .product-image-container, .product-info {
+                max-width: 100%; /* Ocupan todo el ancho disponible */
+                min-width: unset; /* Eliminar min-width fijo */
+            }
+            .product-info {
+                padding: 15px;
+            }
+            .action-buttons {
+                flex-direction: column; /* Apila los botones de acción */
+                width: 100%;
+                gap: 10px;
+            }
+            .btn-add-to-cart {
+                width: 100%; /* Botón de carrito ocupa todo el ancho */
+            }
+            .btn-wishlist {
+                position: static; /* Vuelve a posicionamiento normal */
+                float: none; /* Desactiva el float */
+                margin-top: 15px; /* Espacio superior */
+            }
+            h1 {
+                font-size: 32px;
+            }
+            .price {
+                font-size: 1.8em;
+            }
+            .detail-page-title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body onload="setupProductDetailPage()">
+
+<header class="header secondary-header">
+  <div class="menu container">
+    <a href="index2.html" class="logo">LOGO</a>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index2.html">Inicio</a></li>
+        <li><a href="products.html">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+        <li><a href="profile.html">Mi Perfil</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+    <section class="container" style="padding-top: 30px; padding-bottom: 50px;">
+        <div class="detail-title-section">
+            <h2 class="detail-page-title">👚 DETALLE DEL PRODUCTO</h2>
+        </div>
+
+        <div id="product-detail-info" class="product-detail-wrapper">
+            <div class="product-image-container">
+                <img id="product-image" src="images/placeholder.jpg" alt="Cargando imagen..." />
+            </div>
+            
+            <div class="product-info">
+                <button id="add-to-wishlist" class="btn-wishlist"><i class="far fa-heart"></i></button> <h1 id="product-name">Cargando Nombre...</h1>
+                <span class="price" id="product-price">Cargando Precio...</span>
+                <p class="stock" id="product-stock">Cargando Stock...</p>
+                
+                <p class="description">Descripción:</p>
+                <p id="product-description">Cargando Descripción...</p>
+
+                <div class="quantity-control">
+                    <label for="quantity">Cantidad:</label>
+                    <input type="number" id="quantity" value="1" min="1">
+                </div>
+
+                <div class="action-buttons">
+                    <button id="add-to-cart" class="btn-add-to-cart">Añadir al Carrito</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-content container">
+    <div class="link"><h3>LOREM</h3><ul><li><a href="#">lorem</a></li></ul></div>
+  </div>
+</footer>
+
+<script src="JS/scrip.js"></script>
+</body>
+</html>

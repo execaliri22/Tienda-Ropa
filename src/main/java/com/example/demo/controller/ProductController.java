@@ -15,13 +15,17 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    // GET /api/products - Ver catálogo de productos [cite: 64]
+    // GET /api/products - Ver catálogo de productos con filtros
     @GetMapping
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+    public List<Product> getAllProducts(
+        @RequestParam(required = false) String categoryId,
+        @RequestParam(required = false) String search) 
+    {
+        // Llama al servicio con los parámetros opcionales
+        return productService.findProducts(categoryId, search);
     }
     
-    // GET /api/products/{id} - Ver detalles de productos [cite: 67]
+    // GET /api/products/{id} - Ver detalles de productos
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable String id) {
         return productService.getProductById(id)
