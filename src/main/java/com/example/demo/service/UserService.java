@@ -31,4 +31,29 @@ public class UserService {
         
         return null; // Credenciales incorrectas
     }
+
+    /**
+     * Actualiza los datos de un usuario por su ID.
+     * @param userId El ID del usuario a modificar.
+     * @param updatedUser El objeto User con los nuevos datos.
+     * @return El usuario actualizado o null si no se encuentra.
+     */
+    public User updateUser(String userId, User updatedUser) {
+        return userRepository.findById(userId).map(user -> {
+            // Actualizar solo los campos que pueden ser modificados
+            if (updatedUser.getNombre() != null) {
+                user.setNombre(updatedUser.getNombre());
+            }
+            if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+                // En una app real, aquí encriptarías la nueva contraseña
+                user.setPassword(updatedUser.getPassword());
+            }
+            if (updatedUser.getDireccion() != null) {
+                user.setDireccion(updatedUser.getDireccion());
+            }
+            // El email (identificador único) no se permite cambiar a través de esta función simple
+            
+            return userRepository.save(user);
+        }).orElse(null);
+    }
 }

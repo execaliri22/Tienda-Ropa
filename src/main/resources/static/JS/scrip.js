@@ -1,5 +1,5 @@
 const BASE_URL = '/api';
-// const MOCK_USER_ID = '12345'; // Coincide con el ID mock usado en los controladores Java <-- ELIMINADO
+// const MOCK_USER_ID = '12345'; // Coincide con el ID mock usado en los controladores Java 
 
 // Variable global para mantener el estado del filtro de categoría
 let currentCategoryId = null;
@@ -18,8 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
         loadCategoriesAndFilters(); 
     } else if (document.querySelector('#cart-items')) {
         loadCart();
-    } else if (document.querySelector('#profile-main')) {
+    } else if (document.querySelector('#profile-main')) { // profile.html
         loadProfileAndHistory();
+    } else if (document.querySelector('#order-history-page')) { // NUEVO: Llamar a la función de pedidos
+        loadOrderHistoryPage();
     } else if (document.getElementById('product-detail-info')) {
         setupProductDetailPage();
     } else if (document.querySelector('#wishlist-container')) {
@@ -570,20 +572,34 @@ async function removeFromWishlist(productId) {
 
 
 // =========================================================
-// LÓGICA DE PERFIL Y ÓRDENES (profile.html)
+// LÓGICA DE PERFIL Y ÓRDENES (profile.html & order_history.html)
 // =========================================================
+
+/**
+ * Llena el formulario de edición con los datos actuales del usuario desde el localStorage.
+ */
+function fillProfileForm(userData) {
+    const nameInput = document.getElementById('update-name');
+    const addressInput = document.getElementById('update-address');
+    
+    // Rellenar campos si existen
+    if (nameInput) nameInput.value = userData.name || '';
+    if (addressInput) addressInput.value = userData.direccion || '';
+}
+
+// Mantiene la carga de info y precarga del formulario de detalles
 async function loadProfileAndHistory() {
     const profileInfo = document.querySelector('#profile-info');
-    const orderHistoryBody = document.querySelector('#order-history-items');
     
     const userId = getUserId();
     const userData = JSON.parse(localStorage.getItem('user'));
     
-    if (!profileInfo || !orderHistoryBody || !userId || !userData) {
+    if (!profileInfo || !userId || !userData) {
         window.location.href = "login.html";
         return;
     }
     
+    // 1. Mostrar información estática
     profileInfo.innerHTML = `
         <h3 class="oswald-title">Información Personal</h3>
         <p><strong>Nombre:</strong> ${userData.name || 'N/A'}</p>
@@ -591,6 +607,20 @@ async function loadProfileAndHistory() {
         <p><strong>Dirección:</strong> ${userData.direccion || 'No especificada'}</p>
     `;
 
+    // 2. Pre-llenar el formulario de edición de detalles
+    fillProfileForm(userData); 
+}
+
+// Carga el historial de pedidos en la página separada
+async function loadOrderHistoryPage() {
+    const orderHistoryBody = document.querySelector('#order-history-items');
+    
+    const userId = getUserId();
+    if (!orderHistoryBody || !userId) {
+        if(orderHistoryBody) orderHistoryBody.innerHTML = '<tr><td colspan="4" style="padding: 20px; text-align: center;">Debe iniciar sesión para ver su historial.</td></tr>';
+        return;
+    }
+    
     try {
         // Usar el ID del usuario en la URL
         const response = await fetch(`${BASE_URL}/users/${userId}/orders`);
@@ -619,11 +649,118 @@ async function loadProfileAndHistory() {
     }
 }
 
+/**
+ * NUEVA FUNCIÓN: Maneja el envío del formulario de actualización de datos personales (Nombre y Dirección).
+ */
+async function handleProfileDetailsUpdate(event) {
+    event.preventDefault();
+    
+    const userId = getUserId();
+    if (!userId) { alert('Sesión expirada. Por favor, inicie sesión.'); return; }
+
+    const newName = document.getElementById('update-name').value;
+    const newAddress = document.getElementById('update-address').value;
+
+    const updatePayload = {
+        nombre: newName,
+        direccion: newAddress
+    };
+
+    try {
+        // Llamada al endpoint PUT /api/users/{id}
+        const response = await fetch(`${BASE_URL}/users/${userId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatePayload)
+        });
+
+        if (response.ok) {
+            const updatedUserData = await response.json();
+
+            // 1. Actualizar localStorage con los nuevos datos
+            const storedData = JSON.parse(localStorage.getItem('user'));
+            storedData.name = updatedUserData.nombre;
+            storedData.direccion = updatedUserData.direccion;
+            
+            localStorage.setItem('user', JSON.stringify(storedData));
+
+            alert('✅ Datos personales actualizados exitosamente.');
+            
+            // 2. Recargar la sección de información para reflejar los cambios
+            loadProfileAndHistory();
+            
+        } else if (response.status === 404) {
+            alert('Error: Usuario no encontrado.');
+        } else {
+            const errorText = await response.text();
+            alert(`Error al actualizar el perfil: ${errorText}`);
+        }
+    } catch (error) {
+        console.error('Error en handleProfileDetailsUpdate:', error);
+        alert('Ocurrió un error de conexión al actualizar los datos personales.');
+    }
+}
+
+/**
+ * NUEVA FUNCIÓN: Maneja el envío del formulario de cambio de contraseña.
+ */
+async function handlePasswordUpdate(event) {
+    event.preventDefault();
+    
+    const userId = getUserId();
+    if (!userId) { alert('Sesión expirada. Por favor, inicie sesión.'); return; }
+
+    const newPassword = document.getElementById('new-password').value;
+    const repeatPassword = document.getElementById('repeat-password').value;
+
+    if (!newPassword || !repeatPassword) {
+        alert('Ambos campos de contraseña son obligatorios.');
+        return;
+    }
+
+    if (newPassword !== repeatPassword) {
+        alert('❌ Error: Las contraseñas no coinciden. Inténtalo de nuevo.');
+        return;
+    }
+    
+    const updatePayload = {
+        password: newPassword
+    };
+
+    try {
+        // Llamada al endpoint PUT /api/users/{id}
+        const response = await fetch(`${BASE_URL}/users/${userId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatePayload)
+        });
+
+        if (response.ok) {
+            // No necesitamos procesar los datos de usuario devueltos
+            alert('✅ Contraseña cambiada exitosamente.');
+            
+            // Limpiar los campos de contraseña después del éxito
+            document.getElementById('new-password').value = '';
+            document.getElementById('repeat-password').value = '';
+            
+        } else if (response.status === 404) {
+            alert('Error: Usuario no encontrado.');
+        } else {
+            const errorText = await response.text();
+            alert(`Error al cambiar la contraseña: ${errorText}`);
+        }
+    } catch (error) {
+        console.error('Error en handlePasswordUpdate:', error);
+        alert('Ocurrió un error de conexión al cambiar la contraseña.');
+    }
+}
+
+
 // =========================================================
 // EXPOSICIÓN DE FUNCIONES GLOBALES
 // =========================================================
 window.handleLogin = handleLogin;
-window.handleRegister = handleRegister; // <-- NUEVO: Exposición de la función de registro
+window.handleRegister = handleRegister; 
 window.checkout = checkout;
 window.removeItemFromCart = removeItemFromCart;
 window.addToWishlist = addToWishlist;
@@ -634,3 +771,6 @@ window.updateCartItemQuantity = updateCartItemQuantity;
 window.loadCategoriesAndFilters = loadCategoriesAndFilters; 
 window.filterProducts = filterProducts;
 window.searchProducts = searchProducts;
+window.handleProfileDetailsUpdate = handleProfileDetailsUpdate; 
+window.handlePasswordUpdate = handlePasswordUpdate;           
+window.loadOrderHistoryPage = loadOrderHistoryPage;

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mi Perfil de Usuario</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     /* Mejoras en el layout del perfil */
     .profile-layout {
@@ -20,6 +21,7 @@
         padding: 20px; 
         background-color: #f5f5f5;
         border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
     .content-area {
         flex: 1; 
@@ -32,36 +34,68 @@
         text-transform: uppercase; 
         margin-bottom: 15px;
     }
-    #order-history {
-        margin-top: 40px; 
-        border-top: 1px solid #ccc; 
-        padding-top: 20px;
-    }
-    .content-area p {
-        margin-bottom: 10px;
-    }
+    
+    /* ESTILOS DE LOS BOTONES Y ENLACES DE LA BARRA LATERAL */
     .sidebar a {
-        display: block; 
+        display: flex; /* Usar flexbox para alinear el icono y el texto */
+        align-items: center; /* Centrar verticalmente */
         margin-bottom: 10px; 
         color: #111;
-        padding: 5px;
-        border-radius: 4px;
-        transition: background-color 0.2s;
+        padding: 10px 15px; /* Más padding */
+        border-radius: 6px; /* Bordes más suaves */
+        transition: all 0.3s ease;
+        text-decoration: none;
+        font-weight: 500;
+        border: 1px solid transparent;
     }
     .sidebar a:hover {
-        background-color: #e0e0e0;
+        background-color: #ddd; /* Fondo más claro en hover */
+        color: #FF5733; /* Color de acento para el texto en hover */
+        border-color: #ccc;
     }
-    @media (max-width: 768px) {
-        .profile-layout {
-            flex-direction: column;
-        }
-        .sidebar {
-            min-width: 100%;
-        }
+    .sidebar a i {
+        margin-right: 10px;
+        font-size: 1.1em;
     }
+    
+    /* Estilo para el botón de Cerrar Sesión (botón de peligro) */
+    .sidebar .btn-logout {
+        display: block;
+        width: 100%;
+        margin-top: 25px !important;
+        padding: 12px 25px;
+        background-color: #dc3545 !important; /* Rojo de peligro */
+        color: #fff !important;
+        border: none;
+        border-radius: 6px;
+        font-weight: 700;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.1s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .sidebar .btn-logout:hover {
+        background-color: #c82333 !important; 
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Estilos para los botones de los formularios (Guardar, Cambiar) */
+    .content-area form button[type="submit"] {
+        padding: 12px 25px;
+        border-radius: 6px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    /* Estilo específico para el botón de cambiar contraseña */
+    .content-area #change-password-form button[type="submit"] {
+        background-color: #ff5733 !important;
+    }
+
   </style>
 </head>
-<body>
+<body onload="loadProfileAndHistory()">
 
 <header class="header" style="min-height: 20vh; background-color: #f0f0f0;">
   <div class="menu container">
@@ -83,10 +117,8 @@
   <div id="profile-main" class="profile-layout">
     <div class="sidebar">
       <h4 style="margin-bottom: 20px; font-weight: 700;">Menú de Cuenta</h4>
-      <a href="#profile-info">Información Personal</a>
-      <a href="wishlist.html">Mi Lista de Deseos</a>
-      <a href="#order-history">Historial de Pedidos</a>
-      <button onclick="logout()" class="btn-2" style="background-color: #dc3545; width: 100%; margin-top: 20px;">Cerrar Sesión</button>
+      <a href="order_history.html"><i class="fas fa-box"></i> Historial de Pedidos</a>
+      <button onclick="logout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
     </div>
 
     <div class="content-area">
@@ -96,21 +128,31 @@
         <p>Cargando datos del usuario...</p>
       </div>
       
-      <h3 id="order-history" class="oswald-title">Historial de Pedidos</h3>
+      <h3 id="edit-details-form" class="oswald-title" style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px;">
+        ⚙️ Editar Datos Personales
+      </h3>
+      <form onsubmit="handleProfileDetailsUpdate(event)">
+        <label for="update-name" style="display: block; margin-top: 15px; font-weight: 600;">Nombre</label>
+        <input type="text" id="update-name" name="nombre" required style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;">
+        
+        <label for="update-address" style="display: block; font-weight: 600;">Dirección</label>
+        <input type="text" id="update-address" name="direccion" style="width: 100%; padding: 10px; margin-bottom: 30px; border: 1px solid #ccc; border-radius: 4px;">
+        
+        <button type="submit" class="btn-1" style="width: 100%; padding: 12px 25px; background-color: #007bff;">Guardar Nombre y Dirección</button>
+      </form>
       
-      <table style="width: 100%; border-collapse: collapse; margin-top: 20px; text-align: left;">
-        <thead>
-          <tr style="border-bottom: 2px solid #111;">
-            <th style="padding: 15px;">ID Pedido</th>
-            <th style="padding: 15px;">Fecha</th>
-            <th style="padding: 15px;">Total</th>
-            <th style="padding: 15px;">Estado</th>
-          </tr>
-        </thead>
-        <tbody id="order-history-items">
-            <tr><td colspan="4" style="padding: 20px; text-align: center;">Cargando historial...</td></tr>
-        </tbody>
-      </table>
+      <h3 id="change-password-form" class="oswald-title" style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px;">
+        🔑 Cambiar Contraseña
+      </h3>
+      <form onsubmit="handlePasswordUpdate(event)">
+        <label for="new-password" style="display: block; margin-top: 15px; font-weight: 600;">Nueva Contraseña</label>
+        <input type="password" id="new-password" name="password" required style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;">
+        
+        <label for="repeat-password" style="display: block; font-weight: 600;">Repetir Contraseña</label>
+        <input type="password" id="repeat-password" name="repeatPassword" required style="width: 100%; padding: 10px; margin-bottom: 30px; border: 1px solid #ccc; border-radius: 4px;">
+        
+        <button type="submit" class="btn-1" style="width: 100%;">Cambiar Contraseña</button>
+      </form>
 
     </div>
   </div>
