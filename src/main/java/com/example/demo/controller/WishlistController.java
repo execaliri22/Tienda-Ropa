@@ -7,33 +7,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/wishlist")
+@RequestMapping("/api/users/{userId}/wishlist") // Ruta con ID dinámico
 public class WishlistController {
     
-    // Usamos el ID de usuario mock para simular la sesión
-    private final String MOCK_USER_ID = "12345"; 
+    // private final String MOCK_USER_ID = "12345"; // Eliminado
 
     @Autowired
     private WishlistService wishlistService;
 
-    // GET /api/wishlist - Ver la lista completa
+    // GET /api/users/{userId}/wishlist - Ver la lista completa
     @GetMapping
-    public ResponseEntity<Wishlist> getWishlist() {
-        Wishlist wishlist = wishlistService.getOrCreateWishlist(MOCK_USER_ID);
+    public ResponseEntity<Wishlist> getWishlist(@PathVariable String userId) {
+        Wishlist wishlist = wishlistService.getOrCreateWishlist(userId);
         return ResponseEntity.ok(wishlist);
     }
 
-    // POST /api/wishlist/add?productId=... - Agregar a favoritos
+    // POST /api/users/{userId}/wishlist/add?productId=... - Agregar a favoritos
     @PostMapping("/add")
-    public ResponseEntity<Wishlist> addProduct(@RequestParam String productId) {
-        Wishlist updatedWishlist = wishlistService.addProductToWishlist(MOCK_USER_ID, productId);
+    public ResponseEntity<Wishlist> addProduct(@PathVariable String userId, @RequestParam String productId) {
+        Wishlist updatedWishlist = wishlistService.addProductToWishlist(userId, productId);
         return ResponseEntity.ok(updatedWishlist);
     }
 
-    // DELETE /api/wishlist/remove?productId=... - Eliminar de favoritos
+    // DELETE /api/users/{userId}/wishlist/remove?productId=... - Eliminar de favoritos
     @DeleteMapping("/remove")
-    public ResponseEntity<Wishlist> removeProduct(@RequestParam String productId) {
-        Wishlist updatedWishlist = wishlistService.removeProductFromWishlist(MOCK_USER_ID, productId);
+    public ResponseEntity<Wishlist> removeProduct(@PathVariable String userId, @RequestParam String productId) {
+        Wishlist updatedWishlist = wishlistService.removeProductFromWishlist(userId, productId);
         return ResponseEntity.ok(updatedWishlist);
     }
 }

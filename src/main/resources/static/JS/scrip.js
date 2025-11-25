@@ -1,8 +1,16 @@
 const BASE_URL = '/api';
-const MOCK_USER_ID = '12345'; // Coincide con el ID mock usado en los controladores Java
+// const MOCK_USER_ID = '12345'; // Coincide con el ID mock usado en los controladores Java <-- ELIMINADO
 
 // Variable global para mantener el estado del filtro de categoría
 let currentCategoryId = null;
+
+// Nueva función para obtener el ID del usuario
+function getUserId() {
+    const userData = JSON.parse(localStorage.getItem('user'));
+    // El 'id' ahora se devuelve en AuthController.java y se almacena aquí.
+    return userData ? userData.id : null; 
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // Lógica de inicio para cada página
@@ -38,7 +46,7 @@ async function handleLogin(event) {
         const result = await response.json();
 
         if (response.ok) {
-            localStorage.setItem('user', JSON.stringify(result));
+            localStorage.setItem('user', JSON.stringify(result)); // Ahora 'result' contiene el ID del usuario
             alert(`Login exitoso para ${result.name}. Redirigiendo...`);
             window.location.href = 'index2.html'; 
         } else {
@@ -297,8 +305,12 @@ async function setupProductDetailPage() {
 // LÓGICA DE CARRITO Y CHECKOUT
 // =========================================================
 async function addToCart(productId, quantity) {
+    const userId = getUserId(); // Obtener el ID del usuario
+    if (!userId) { alert('Debe iniciar sesión para añadir al carrito.'); return; }
+
     try {
-        const url = `${BASE_URL}/cart/add?productId=${productId}&quantity=${quantity}`;
+        // Usar el ID del usuario en la URL
+        const url = `${BASE_URL}/users/${userId}/cart/add?productId=${productId}&quantity=${quantity}`; 
         const response = await fetch(url, { method: 'POST' });
         
         if (response.ok) {
@@ -322,8 +334,17 @@ async function loadCart() {
     
     if (!cartItemsBody || !cartTotalSpan) return;
 
+    const userId = getUserId(); // Obtener el ID del usuario
+    if (!userId) { 
+        cartItemsBody.innerHTML = '<tr><td colspan="5" style="padding: 20px; text-align: center;">Por favor, inicie sesión para ver su carrito.</td></tr>'; 
+        cartTotalSpan.textContent = `$0.00`;
+        if (checkoutTotal) checkoutTotal.textContent = `$0.00`;
+        return; 
+    }
+
     try {
-        const response = await fetch(`${BASE_URL}/cart`);
+        // Usar el ID del usuario en la URL
+        const response = await fetch(`${BASE_URL}/users/${userId}/cart`);
         const cart = await response.json();
 
         cartItemsBody.innerHTML = '';
@@ -368,6 +389,9 @@ async function loadCart() {
 }
 
 async function updateCartItemQuantity(inputElement) {
+    const userId = getUserId(); // Obtener el ID del usuario
+    if (!userId) { alert('Debe iniciar sesión para actualizar el carrito.'); loadCart(); return; }
+
     const productId = inputElement.getAttribute('data-product-id');
     const newQuantity = parseInt(inputElement.value);
 
@@ -378,7 +402,8 @@ async function updateCartItemQuantity(inputElement) {
     }
 
     try {
-        const url = `${BASE_URL}/cart/update?productId=${productId}&quantity=${newQuantity}`;
+        // Usar el ID del usuario en la URL
+        const url = `${BASE_URL}/users/${userId}/cart/update?productId=${productId}&quantity=${newQuantity}`; 
         const response = await fetch(url, { method: 'POST' });
 
         if (response.ok) {
@@ -394,8 +419,12 @@ async function updateCartItemQuantity(inputElement) {
 }
 
 async function removeItemFromCart(productId) {
+    const userId = getUserId(); // Obtener el ID del usuario
+    if (!userId) { alert('Debe iniciar sesión para modificar el carrito.'); return; }
+
     try {
-        const url = `${BASE_URL}/cart/remove?productId=${productId}`; 
+        // Usar el ID del usuario en la URL
+        const url = `${BASE_URL}/users/${userId}/cart/remove?productId=${productId}`; 
         const response = await fetch(url, { method: 'POST' }); 
         
         if (response.ok) {
@@ -411,8 +440,12 @@ async function removeItemFromCart(productId) {
 
 async function checkout(event) {
     event.preventDefault();
+    const userId = getUserId(); // Obtener el ID del usuario
+    if (!userId) { alert('Debe iniciar sesión para finalizar la compra.'); return; }
+    
     try {
-        const response = await fetch(`${BASE_URL}/cart/checkout`, { method: 'POST' });
+        // Usar el ID del usuario en la URL
+        const response = await fetch(`${BASE_URL}/users/${userId}/cart/checkout`, { method: 'POST' });
         
         if (response.ok) {
             const order = await response.json();
@@ -432,8 +465,12 @@ async function checkout(event) {
 // LÓGICA DE LISTA DE DESEOS
 // =========================================================
 async function addToWishlist(productId) {
+    const userId = getUserId(); // Obtener el ID del usuario
+    if (!userId) { alert('Debe iniciar sesión para añadir a la lista de deseos.'); return; }
+
     try {
-        const url = `${BASE_URL}/wishlist/add?productId=${productId}`;
+        // Usar el ID del usuario en la URL
+        const url = `${BASE_URL}/users/${userId}/wishlist/add?productId=${productId}`;
         const response = await fetch(url, { method: 'POST' });
         
         if (response.ok) {
@@ -453,8 +490,15 @@ async function loadWishlist() {
     const container = document.querySelector('#wishlist-container');
     if (!container) return;
     
+    const userId = getUserId(); // Obtener el ID del usuario
+    if (!userId) { 
+        container.innerHTML = '<p>Por favor, inicie sesión para ver su lista de deseos.</p>'; 
+        return; 
+    }
+
     try {
-        const response = await fetch(`${BASE_URL}/wishlist`);
+        // Usar el ID del usuario en la URL
+        const response = await fetch(`${BASE_URL}/users/${userId}/wishlist`);
         const wishlist = await response.json();
 
         container.innerHTML = '';
@@ -505,8 +549,12 @@ function createWishlistItemCard(product) {
 }
 
 async function removeFromWishlist(productId) {
+    const userId = getUserId(); // Obtener el ID del usuario
+    if (!userId) { alert('Debe iniciar sesión para eliminar de la lista de deseos.'); return; }
+    
     try {
-        const url = `${BASE_URL}/wishlist/remove?productId=${productId}`;
+        // Usar el ID del usuario en la URL
+        const url = `${BASE_URL}/users/${userId}/wishlist/remove?productId=${productId}`;
         const response = await fetch(url, { method: 'DELETE' }); 
         
         if (response.ok) {
@@ -527,9 +575,11 @@ async function removeFromWishlist(productId) {
 async function loadProfileAndHistory() {
     const profileInfo = document.querySelector('#profile-info');
     const orderHistoryBody = document.querySelector('#order-history-items');
+    
+    const userId = getUserId();
     const userData = JSON.parse(localStorage.getItem('user'));
     
-    if (!profileInfo || !orderHistoryBody || !userData) {
+    if (!profileInfo || !orderHistoryBody || !userId || !userData) {
         window.location.href = "login.html";
         return;
     }
@@ -542,7 +592,8 @@ async function loadProfileAndHistory() {
     `;
 
     try {
-        const response = await fetch(`${BASE_URL}/orders`);
+        // Usar el ID del usuario en la URL
+        const response = await fetch(`${BASE_URL}/users/${userId}/orders`);
         const orders = await response.json();
 
         orderHistoryBody.innerHTML = '';

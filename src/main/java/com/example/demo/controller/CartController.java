@@ -8,43 +8,43 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/api/users/{userId}/cart") // Ruta con ID dinámico
 public class CartController {
     
-    private final String MOCK_USER_ID = "12345";
+    // private final String MOCK_USER_ID = "12345"; // Eliminado
 
     @Autowired
     private CartService cartService;
     
-    // GET /api/cart
+    // GET /api/users/{userId}/cart
     @GetMapping
-    public Cart getCart() {
-        return cartService.getOrCreateCart(MOCK_USER_ID);
+    public Cart getCart(@PathVariable String userId) {
+        return cartService.getOrCreateCart(userId);
     }
 
-    // POST /api/cart/add - Agregar producto al carrito
+    // POST /api/users/{userId}/cart/add - Agregar producto al carrito
     @PostMapping("/add")
-    public Cart addItemToCart(@RequestParam String productId, @RequestParam int quantity) {
-        return cartService.addItem(MOCK_USER_ID, productId, quantity);
+    public Cart addItemToCart(@PathVariable String userId, @RequestParam String productId, @RequestParam int quantity) {
+        return cartService.addItem(userId, productId, quantity);
     }
 
-    // POST /api/cart/update - Modificar cantidad (Implementado)
+    // POST /api/users/{userId}/cart/update - Modificar cantidad
     @PostMapping("/update")
-    public Cart updateItemQuantity(@RequestParam String productId, @RequestParam int quantity) {
-        return cartService.updateItemQuantity(MOCK_USER_ID, productId, quantity);
+    public Cart updateItemQuantity(@PathVariable String userId, @RequestParam String productId, @RequestParam int quantity) {
+        return cartService.updateItemQuantity(userId, productId, quantity);
     }
 
-    // POST /api/cart/remove - Eliminar del carrito (Implementado)
+    // POST /api/users/{userId}/cart/remove - Eliminar del carrito
     @PostMapping("/remove")
-    public Cart removeItem(@RequestParam String productId) {
-        return cartService.removeItem(MOCK_USER_ID, productId);
+    public Cart removeItem(@PathVariable String userId, @RequestParam String productId) {
+        return cartService.removeItem(userId, productId);
     }
 
-    // POST /api/cart/checkout - Realizar compra (checkout)
+    // POST /api/users/{userId}/cart/checkout - Realizar compra (checkout)
     @PostMapping("/checkout")
-    public ResponseEntity<Order> checkout() {
+    public ResponseEntity<Order> checkout(@PathVariable String userId) {
         try {
-            Order order = cartService.checkout(MOCK_USER_ID);
+            Order order = cartService.checkout(userId);
             return ResponseEntity.ok(order);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();

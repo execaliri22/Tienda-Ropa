@@ -29,6 +29,7 @@ public class AuthController {
             // Devolver información del usuario en formato JSON
             Map<String, String> response = new HashMap<>();
             response.put("status", "success");
+            response.put("id", authenticatedUser.getId()); // ID del usuario agregado
             response.put("name", authenticatedUser.getNombre());
             response.put("email", authenticatedUser.getEmail());
             response.put("message", "Login exitoso");
