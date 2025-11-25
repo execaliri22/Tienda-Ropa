@@ -15,6 +15,9 @@ public class User {
     private String email; 
     private String password; // Representa contrasenaHash
     private String direccion; 
+    
+    // NUEVO: Campo para la URL de la foto de perfil (relativa a /static/)
+    private String profilePictureUrl; 
 
     // Relación 'posee' con Pedido (Order), cargada automáticamente por MongoDB
     @DBRef
@@ -44,6 +47,10 @@ public class User {
 
     public String getDireccion() { return direccion; }
     public void setDireccion(String direccion) { this.direccion = direccion; }
+    
+    // NUEVOS Getters y Setters para la foto
+    public String getProfilePictureUrl() { return profilePictureUrl; }
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
     
     // Getters y Setters para la nueva lista de pedidos
     public List<Order> getPedidos() { return pedidos; }

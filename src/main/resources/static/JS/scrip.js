@@ -1,5 +1,5 @@
 const BASE_URL = '/api';
-// const MOCK_USER_ID = '12345'; // Coincide con el ID mock usado en los controladores Java 
+// const MOCK_USER_ID = '12345'; // Eliminado y reemplazado por la obtención dinámica del ID
 
 // Variable global para mantener el estado del filtro de categoría
 let currentCategoryId = null;
@@ -20,14 +20,32 @@ document.addEventListener('DOMContentLoaded', () => {
         loadCart();
     } else if (document.querySelector('#profile-main')) { // profile.html
         loadProfileAndHistory();
-    } else if (document.querySelector('#order-history-page')) { // NUEVO: Llamar a la función de pedidos
+    } else if (document.querySelector('#order-history-page')) { // Página de historial de pedidos
         loadOrderHistoryPage();
     } else if (document.getElementById('product-detail-info')) {
         setupProductDetailPage();
     } else if (document.querySelector('#wishlist-container')) {
         loadWishlist();
     }
+    
+    // Función de actualización de avatar en index2.html
+    updateAvatarDisplay();
 });
+
+// NUEVA FUNCIÓN: Actualiza el avatar en la barra de navegación y panel lateral
+function updateAvatarDisplay() {
+    const userData = JSON.parse(localStorage.getItem('user'));
+    // Usamos 'images/default_avatar.png' si no hay URL guardada.
+    const avatarPath = userData ? (userData.profilePictureUrl || 'images/default_avatar.png') : 'images/default_avatar.png';
+    const finalUrl = avatarPath; // Asume que la URL es relativa a static/
+
+    if (document.getElementById('userAvatarNav')) {
+        document.getElementById('userAvatarNav').src = finalUrl;
+    }
+    if (document.getElementById('profileAvatar')) {
+        document.getElementById('profileAvatar').src = finalUrl;
+    }
+}
 
 
 // =========================================================
@@ -48,7 +66,15 @@ async function handleLogin(event) {
         const result = await response.json();
 
         if (response.ok) {
-            localStorage.setItem('user', JSON.stringify(result)); // Ahora 'result' contiene el ID del usuario
+            // Se realiza una solicitud adicional para obtener la URL de la foto y la dirección.
+            const userResponse = await fetch(`${BASE_URL}/users/${result.id}`);
+            const fullUserData = await userResponse.json();
+            
+            // Adjuntar los datos adicionales al objeto de sesión
+            result.profilePictureUrl = fullUserData.profilePictureUrl || 'images/default_avatar.png';
+            result.direccion = fullUserData.direccion || ''; 
+            
+            localStorage.setItem('user', JSON.stringify(result)); 
             alert(`Login exitoso para ${result.name}. Redirigiendo...`);
             window.location.href = 'index2.html'; 
         } else {
@@ -585,6 +611,14 @@ function fillProfileForm(userData) {
     // Rellenar campos si existen
     if (nameInput) nameInput.value = userData.name || '';
     if (addressInput) addressInput.value = userData.direccion || '';
+    
+    // Configurar la imagen del avatar en el sidebar
+    const avatarImg = document.getElementById('current-avatar');
+    if (avatarImg) {
+        const avatarPath = userData.profilePictureUrl || 'images/default_avatar.png';
+        // La URL se construye relativa a /static/
+        avatarImg.src = avatarPath;
+    }
 }
 
 // Mantiene la carga de info y precarga del formulario de detalles
@@ -607,7 +641,7 @@ async function loadProfileAndHistory() {
         <p><strong>Dirección:</strong> ${userData.direccion || 'No especificada'}</p>
     `;
 
-    // 2. Pre-llenar el formulario de edición de detalles
+    // 2. Pre-llenar el formulario de edición de detalles y foto
     fillProfileForm(userData); 
 }
 
@@ -650,7 +684,7 @@ async function loadOrderHistoryPage() {
 }
 
 /**
- * NUEVA FUNCIÓN: Maneja el envío del formulario de actualización de datos personales (Nombre y Dirección).
+ * Maneja el envío del formulario de actualización de datos personales (Nombre y Dirección).
  */
 async function handleProfileDetailsUpdate(event) {
     event.preventDefault();
@@ -702,7 +736,7 @@ async function handleProfileDetailsUpdate(event) {
 }
 
 /**
- * NUEVA FUNCIÓN: Maneja el envío del formulario de cambio de contraseña.
+ * Maneja el envío del formulario de cambio de contraseña.
  */
 async function handlePasswordUpdate(event) {
     event.preventDefault();
@@ -737,7 +771,7 @@ async function handlePasswordUpdate(event) {
 
         if (response.ok) {
             // No necesitamos procesar los datos de usuario devueltos
-            alert('✅ Contraseña cambiada exitosamente.');
+            alert('✅ Contraseña cambiada exitosamente. Por favor, inicie sesión de nuevo para confirmar.');
             
             // Limpiar los campos de contraseña después del éxito
             document.getElementById('new-password').value = '';
@@ -752,6 +786,95 @@ async function handlePasswordUpdate(event) {
     } catch (error) {
         console.error('Error en handlePasswordUpdate:', error);
         alert('Ocurrió un error de conexión al cambiar la contraseña.');
+    }
+}
+
+
+/**
+ * Maneja la subida de la foto de perfil.
+ */
+async function handleProfilePictureUpload(event) {
+    event.preventDefault();
+    
+    const userId = getUserId();
+    const fileInput = document.getElementById('file-input');
+    
+    if (!userId) { alert('Sesión expirada. Por favor, inicie sesión.'); return; }
+    if (fileInput.files.length === 0) { return; } 
+
+    // Usar FormData para enviar el archivo
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    try {
+        // Llamada al endpoint POST /api/users/{userId}/profile-picture
+        const response = await fetch(`${BASE_URL}/users/${userId}/profile-picture`, {
+            method: 'POST',
+            body: formData 
+        });
+
+        if (response.ok) {
+            const newPath = await response.text(); 
+            
+            // 1. Actualizar localStorage con la nueva ruta
+            const storedData = JSON.parse(localStorage.getItem('user'));
+            storedData.profilePictureUrl = newPath;
+            localStorage.setItem('user', JSON.stringify(storedData));
+
+            alert('✅ Foto de perfil subida exitosamente.');
+            
+            // 2. Recargar las imágenes en la página y en el index2.html
+            fillProfileForm(storedData);
+            updateAvatarDisplay(); // Actualiza el avatar en index2.html/panel lateral
+
+        } else {
+            const errorText = await response.text();
+            alert(`Error al subir la foto: ${errorText}`);
+        }
+    } catch (error) {
+        console.error('Error en handleProfilePictureUpload:', error);
+        alert('Ocurrió un error de conexión al subir la foto.');
+    }
+}
+
+/**
+ * Maneja la eliminación de la foto de perfil.
+ */
+async function handleProfilePictureDelete() {
+    const userId = getUserId();
+    if (!userId) { alert('Sesión expirada. Por favor, inicie sesión.'); return; }
+
+    if (!confirm('¿Estás seguro de que deseas eliminar tu foto de perfil? Se restablecerá a la imagen por defecto.')) {
+        return;
+    }
+
+    try {
+        // Llamada al endpoint DELETE /api/users/{userId}/profile-picture
+        const response = await fetch(`${BASE_URL}/users/${userId}/profile-picture`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            const defaultPath = await response.text(); 
+            
+            // 1. Actualizar localStorage con la ruta por defecto
+            const storedData = JSON.parse(localStorage.getItem('user'));
+            storedData.profilePictureUrl = defaultPath;
+            localStorage.setItem('user', JSON.stringify(storedData));
+
+            alert('✅ Foto de perfil eliminada exitosamente.');
+            
+            // 2. Recargar las imágenes en la página y en el index2.html
+            fillProfileForm(storedData);
+            updateAvatarDisplay();
+
+        } else {
+            const errorText = await response.text();
+            alert(`Error al eliminar la foto: ${errorText}`);
+        }
+    } catch (error) {
+        console.error('Error en handleProfilePictureDelete:', error);
+        alert('Ocurrió un error de conexión al eliminar la foto.');
     }
 }
 
@@ -774,3 +897,6 @@ window.searchProducts = searchProducts;
 window.handleProfileDetailsUpdate = handleProfileDetailsUpdate; 
 window.handlePasswordUpdate = handlePasswordUpdate;           
 window.loadOrderHistoryPage = loadOrderHistoryPage;
+window.handleProfilePictureUpload = handleProfilePictureUpload;
+window.handleProfilePictureDelete = handleProfilePictureDelete;
+window.updateAvatarDisplay = updateAvatarDisplay; // Expuesta para uso en index2.html

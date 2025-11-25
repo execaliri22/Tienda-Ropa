@@ -35,6 +35,17 @@
         margin-bottom: 15px;
     }
     
+    /* ESTILOS DE LA FOTO DE PERFIL */
+    #current-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #FF5733;
+        margin: 0 auto 15px;
+        display: block;
+    }
+
     /* ESTILOS DE LOS BOTONES Y ENLACES DE LA BARRA LATERAL */
     .sidebar a {
         display: flex; /* Usar flexbox para alinear el icono y el texto */
@@ -116,7 +127,32 @@
   
   <div id="profile-main" class="profile-layout">
     <div class="sidebar">
-      <h4 style="margin-bottom: 20px; font-weight: 700;">Menú de Cuenta</h4>
+      <h4 style="margin-bottom: 20px; font-weight: 700; text-align: center;">Tu Avatar</h4>
+      <img id="current-avatar" src="images/default_avatar.png" alt="Foto de perfil actual">
+
+      <h4 class="oswald-title" style="margin-top: 20px;">Foto de Perfil</h4>
+      <form id="upload-form" onsubmit="handleProfilePictureUpload(event)" enctype="multipart/form-data">
+        <input type="file" id="file-input" name="file" accept="image/*" style="display: none;">
+        <button type="button" onclick="document.getElementById('file-input').click()" class="btn-1" style="width: 100%; padding: 8px 15px; margin-top: 10px; background-color: #28a745;">
+            <i class="fas fa-camera"></i> Añadir Foto
+        </button>
+        <button type="submit" id="upload-button" style="display: none;"></button> 
+        <script>
+            document.getElementById('file-input').onchange = function() {
+                if(this.files.length > 0) {
+                    document.getElementById('upload-button').click();
+                }
+            };
+        </script>
+      </form>
+      <button onclick="handleProfilePictureDelete()" class="btn-1" style="width: 100%; padding: 8px 15px; margin-top: 10px; background-color: #6c757d;">
+          <i class="fas fa-trash"></i> Eliminar Foto
+      </button>
+      <h4 style="margin-top: 20px; margin-bottom: 20px; font-weight: 700;">Menú de Cuenta</h4>
+      <a href="#profile-info"><i class="fas fa-user-circle"></i> Información Personal</a>
+      <a href="#edit-details-form"><i class="fas fa-edit"></i> Editar Datos</a>
+      <a href="#change-password-form"><i class="fas fa-key"></i> Cambiar Contraseña</a>
+      <a href="wishlist.html"><i class="fas fa-heart"></i> Mi Lista de Deseos</a>
       <a href="order_history.html"><i class="fas fa-box"></i> Historial de Pedidos</a>
       <button onclick="logout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
     </div>
